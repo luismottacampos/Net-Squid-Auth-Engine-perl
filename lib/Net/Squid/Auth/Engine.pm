@@ -14,7 +14,7 @@ Version 0.01
 
 =cut
 
-use version; our $VERSION = qv("0.01.01");
+use version; our $VERSION = qv("0.01.02");
 
 =head1 SYNOPSIS
 
