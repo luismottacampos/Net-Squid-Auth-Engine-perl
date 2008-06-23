@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use Net::Squid::Auth::Engine;
+use IO::Handle;
+
+BEGIN { STDOUT->autoflush(1); }
+
+my $engine = Net::Squid::Auth::Engine->new( configuration => $ARGV[0] );
+
+$engine->run;
+
+__END__
+
+=head1 NAME
+
+squid-auth-engine - External Credential Verification Script for Squid
+
+=head1 VERSION
+
+=head1 SYNOPSYS
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+=head1 BUGS
+
+=head1 SUPPORT
+
+=head1 ACKNOWLEDGEMENTS
+
+=head1 COPYRIGHT & LICENSE
+
+=cut

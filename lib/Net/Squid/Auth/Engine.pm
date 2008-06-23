@@ -2,6 +2,7 @@ package Net::Squid::Auth::Engine;
 
 use warnings;
 use strict;
+use Config::General;
 
 =head1 NAME
 
@@ -20,7 +21,7 @@ use version; our $VERSION = qv("0.01.01");
 Squid authentication using an external credentials repository, now implemented
 in Perl. If you're a sysadmin trying to use this engine to authenticate your
 Squid users, please read the documentation provided with the script
-squid-auth-engine, shipped with this module.
+$Config{InstallScript}/squid-auth-engine, shipped with this module.
 
     #!/usr/bin/perl
     use warnings;
@@ -80,7 +81,7 @@ to validate any credentials the way it sees fit.
 
 =head1 EXAMPLE PLUGIN
 
-As a plungin implementation example, this module depends on the
+As a plugin implementation example, this module depends on the
 L<Net::Squid::Auth::Plugin::UserList>, the most basic plugin possible: it loads
 a username and password list from the configuration file and uses it to
 authenticate users against it. For more information, please read the
@@ -126,12 +127,12 @@ sub _read_config_file {
       . $self->{_CONF}{filename} . q{".}
       unless -r $self->{_CONF}{filename};
     $self->{_CONFIG} = Config::General->new(
-        -ConfigFile            => $self->{_CONF}{filename},
-        -AllowMultiOptions     => 'no',
-        -UseApacheInclude      => 1,
-        -MergeDuplicateBlocks  => 1,
-        -AutoTrue              => 1,
-        -CComments             => 0,
+        -ConfigFile           => $self->{_CONF}{filename},
+        -AllowMultiOptions    => 'no',
+        -UseApacheInclude     => 1,
+        -MergeDuplicateBlocks => 1,
+        -AutoTrue             => 1,
+        -CComments            => 0,
     );
 
     # Mandatory Config File Options Verification
