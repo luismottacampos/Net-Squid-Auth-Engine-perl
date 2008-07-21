@@ -1,0 +1,8 @@
+=pod
+
+=head1 TODO LIST FOR Net::Squid::Auth::Engine
+
+=head2 Implement something like this for ACLs 
+
+
+=cut

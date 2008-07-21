@@ -14,7 +14,7 @@ Version 0.01
 
 =cut
 
-use version; our $VERSION = qv("0.01.02");
+use version; our $VERSION = qv("0.01.03");
 
 =head1 SYNOPSIS
 
@@ -63,11 +63,6 @@ for the plugin initialize itself, stablish database connections and ensure it
 have all the necessary resources to verify the credentials presented. It
 receives no parameters and expect no return values.
 
-Attention: this function is called under the protection of an alarm() call that
-will be triggered in 10 seconds, to ensure that the control returns to the
-module in case of problems. Please make sure that your initialization completes
-before this time-out, or your module will not work as expected.
-
 =item B<C<is_valid( $username, $password )>>
 
 Credential verification method. This method does the real work for the
@@ -89,6 +84,22 @@ L<Net::Squid::Auth::Plugin::UserList> documentation.
 
 =head1 FUNCTIONS
 
+=head2 new
+
+Constructor. Receives a configuration file name, opens and reads it,
+initializes the module and returns the authentication engine instance.
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = bless {}, $class;
+    $self->_read_config_file;
+    $self->_initialize;
+    return $self;
+}
+
+
 =head2 run
 
 Runs the engine, that is: load and parse the configuration file; identifies the
@@ -104,13 +115,11 @@ Then, waits for the next credential line to show up... you got the idea, right?
 
 sub run {
     my $self = shift;
-    $self->_read_config_file;
-    $self->_initialize;
     while (1) {
         my ( $username, $password ) = $self->_read_credentials;
         print STDOUT $self->{_plugin}->is_valid( $username, $password )
-          ? "OK\n"
-          : "ERR\n";
+            ? "OK\n"
+            : "ERR\n";
     }
 }
 
@@ -124,8 +133,8 @@ configuration parser is L<Config::General>.
 sub _read_config_file {
     my $self = shift;
     die q{Can't read the configuration file "}
-      . $self->{_CONF}{filename} . q{".}
-      unless -r $self->{_CONF}{filename};
+        . $self->{_CONF}{filename} . q{".}
+        unless -r $self->{_CONF}{filename};
     $self->{_CONFIG} = Config::General->new(
         -ConfigFile           => $self->{_CONF}{filename},
         -AllowMultiOptions    => 'no',
@@ -137,32 +146,29 @@ sub _read_config_file {
 
     # Mandatory Config File Options Verification
     die q{Missing mandatory 'plugin' keyword in the configuration file.}
-      unless $self->{_CONFIG}{plugin};
+        unless $self->{_CONFIG}{plugin};
     my $section = $self->{_CONFIG}{plugin};
     die "Missing mandatory section '$section' in the config file."
-      unless UNIVERSAL::isa( $self->{_CONFIG}{$section}, 'HASH' );
+        unless UNIVERSAL::isa( $self->{_CONFIG}{$section}, 'HASH' );
 }
 
 =head2 _initialize
+
+Internal engine initialization. Happens once, mainly instanciates the plugin
+and tries to initialize it properly. Die for errors, as usual.
 
 =cut
 
 sub _initialize {
     my $self   = shift;
-    my $plugin = 'Net::Squid::Auth::Plugin::' . $self->{_CONFIG}{plugin};
-    eval "use $plugin";
-    die qq{Can't load "$plugin": $@.} if $@;
-    $self->{_plugin} =
-      eval { $plugin->new( $self->{_CONFIG}{ $self->{_CONFIG}{plugin} } ); };
-    die qq{Can't instantiate $plugin: $@.} if $@;
-    eval {
-        local $SIG{ALRM} = sub { die 'RING'; };
-        alarm 10;
-        $self->{_plugin}->initialize;
-        alarm 0;
-    };
-    die qq{$plugin\:\:initialize() toke too long.} if $@ =~ m{RING};
-    die qq{$plugin\:\:initialize() triggered an error: $@.} if $@;
+    my $tag    = $self->{_CONFIG}{plugin};
+    my $module = 'Net::Squid::Auth::Plugin::' . $self->{_CONFIG}{plugin};
+    eval "use $module";
+    die qq{Can't load "$module": $@.} if $@;
+    $self->{_plugin} = eval { $module->new( $self->{_CONFIG}{$tag} ); };
+    die qq{Can't instantiate $module: $@.} if $@;
+    eval { $self->{_plugin}->initialize; };
+    die qq{$module\:\:initialize() triggered an error: $@.} if $@;
 }
 
 =head2 _read_credentials
@@ -177,6 +183,7 @@ splitting whitespace), as described by the Squid HTTP Cache documentation.
 sub _read_credentials {
     my $self        = shift;
     my $credentials = <STDIN>;
+    # TODO: is this the right thing to do? Check it
     die q{Got a EOF from Squid?!?} unless $credentials;
     my ( $username, $password ) = $credentials =~ m{^(\S+)(?:\s+(.+))?$};
     return ( $username, $password );
@@ -243,6 +250,9 @@ To Fernando Oliveira, for comments and questioning the prototype;
 
 To Alexei Znamensky, Gabriel Viera, and Mike Tesliuk, for pointing me a design
 bug and helping me re-design the responsibility chain.
+
+To Alexei Znamensky, for trying to use the module and implementing
+L<Net::Squid::Auth::Plugin::LDAP> (comming soon).
 
 =head1 COPYRIGHT & LICENSE
 

@@ -6,6 +6,7 @@ use IO::Handle;
 
 BEGIN { STDOUT->autoflush(1); }
 
+die qq{$ARGV[0] is not a filename.} unless -f $ARGV[0];
 my $engine = Net::Squid::Auth::Engine->new( configuration => $ARGV[0] );
 
 $engine->run;
