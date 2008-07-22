@@ -14,7 +14,7 @@ Version 0.01
 
 =cut
 
-use version; our $VERSION = qv("0.01.03");
+use version; our $VERSION = qv("0.01.04");
 
 =head1 SYNOPSIS
 
@@ -92,9 +92,9 @@ initializes the module and returns the authentication engine instance.
 =cut
 
 sub new {
-    my $class = shift;
+    my ( $class, $config ) = @_;
     my $self = bless {}, $class;
-    $self->_read_config_file;
+    $self->_read_config_file( $config );
     $self->_initialize;
     return $self;
 }
