@@ -1,9 +1,10 @@
-bin/squid-auth-engine
+Build.PL
 Changes
-lib/Net/Squid/Auth/Engine.pm
-Makefile.PL
 MANIFEST
+Makefile.PL
 README
+bin/squid-auth-engine
+lib/Net/Squid/Auth/Engine.pm
 t/00-load.t
 t/boilerplate.t
 t/pod-coverage.t
