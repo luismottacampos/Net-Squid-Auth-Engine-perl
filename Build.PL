@@ -5,21 +5,19 @@ use warnings;
 
 use Module::Build;
 
-my $build = Module::Build->new
-  (
-   module_name => 'Net::Squid::Auth::Engine',
-   dist_author => 'Luis Motta Campos <lmc@cpan.org>',
-   dist_abstract => 'External Credentials Authentication for Squid HTTP Cache',
-   script_files => [ qw( bin/squid-auth-engine ) ],
-   requires => {
-                 'Config::General' => '2.38',
-                 'IO::Handle' => 0,
-                 'Test::More' => 0
-               },
-   add_to_cleanup => [
-                       'Net-Squid-Auth-Engine-*'
-                     ],
-   license => 'perl',
-  );
+my $build = Module::Build->new(
+    module_name  => 'Net::Squid::Auth::Engine',
+    dist_author  => 'Luis Motta Campos <lmc@cpan.org>',
+    script_files => [qw( bin/squid-auth-engine )],
+    requires     => {
+        'Config::General' => '2.38',
+        'IO::Handle'      => 0,
+        'Test::More'      => 0
+    },
+    add_to_cleanup => ['Net-Squid-Auth-Engine-*'],
+    dist_abstract =>
+        'External Credentials Authentication for Squid HTTP Cache',
+    license => 'perl',
+);
 
 $build->create_build_script;
