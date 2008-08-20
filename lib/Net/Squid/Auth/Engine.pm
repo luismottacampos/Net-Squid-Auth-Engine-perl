@@ -2,7 +2,7 @@ package Net::Squid::Auth::Engine;
 
 use warnings;
 use strict;
-use Config::General;
+use Config::General qw(ParseConfig);
 
 =head1 NAME
 
@@ -14,7 +14,7 @@ Version 0.01
 
 =cut
 
-use version; our $VERSION = qv("0.01.04");
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -29,7 +29,7 @@ $Config{InstallScript}/squid-auth-engine, shipped with this module.
     use Net::Squid::Auth::Engine;
     use IO::Handle;
     BEGIN { STDOUT->autoflush(1); }
-    my $engine = Net::Squid::Auth::Engine->new( configuration => $ARGV[0] );
+    my $engine = Net::Squid::Auth::Engine->new( $ARGV[0] );
     $engine->run;
 
 =head1 CONFIGURATION FILE SPECIFICATION
@@ -94,6 +94,7 @@ initializes the module and returns the authentication engine instance.
 sub new {
     my ( $class, $config ) = @_;
     my $self = bless {}, $class;
+		die "Net::Squid::Auth::Engine requires a config file" unless $config;
     $self->_read_config_file( $config );
     $self->_initialize;
     return $self;
@@ -132,10 +133,11 @@ configuration parser is L<Config::General>.
 
 sub _read_config_file {
     my $self = shift;
+		$self->{_CONF}{filename} = shift;
     die q{Can't read the configuration file "}
         . $self->{_CONF}{filename} . q{".}
         unless -r $self->{_CONF}{filename};
-    $self->{_CONFIG} = Config::General->new(
+    my %conf = ParseConfig(
         -ConfigFile           => $self->{_CONF}{filename},
         -AllowMultiOptions    => 'no',
         -UseApacheInclude     => 1,
@@ -143,6 +145,7 @@ sub _read_config_file {
         -AutoTrue             => 1,
         -CComments            => 0,
     );
+    $self->{_CONFIG} = \%conf;
 
     # Mandatory Config File Options Verification
     die q{Missing mandatory 'plugin' keyword in the configuration file.}
@@ -251,8 +254,8 @@ To Fernando Oliveira, for comments and questioning the prototype;
 To Alexei Znamensky, Gabriel Viera, and Mike Tesliuk, for pointing me a design
 bug and helping me re-design the responsibility chain.
 
-To Alexei Znamensky, for trying to use the module and implementing
-L<Net::Squid::Auth::Plugin::LDAP> (comming soon).
+To Alexei Znamensky, for trying to use the module, reporting bugs, submiting
+patches and implementing L<Net::Squid::Auth::Plugin::LDAP>.
 
 =head1 COPYRIGHT & LICENSE
 

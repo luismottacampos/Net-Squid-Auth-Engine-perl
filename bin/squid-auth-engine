@@ -1,4 +1,7 @@
 #!/usr/bin/perl
+
+eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
 use warnings;
 use strict;
 use Net::Squid::Auth::Engine;
@@ -7,7 +10,7 @@ use IO::Handle;
 BEGIN { STDOUT->autoflush(1); }
 
 die qq{$ARGV[0] is not a filename.} unless -f $ARGV[0];
-my $engine = Net::Squid::Auth::Engine->new( configuration => $ARGV[0] );
+my $engine = Net::Squid::Auth::Engine->new( $ARGV[0] );
 
 $engine->run;
 
