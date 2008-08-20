@@ -6,6 +6,7 @@
 
 # Avoid Makemaker generated and utility files.
 \bMANIFEST\.bak
+\bMANIFEST\.SKIP
 \bMakefile$
 \bblib/
 \bMakeMaker-\d
@@ -14,6 +15,7 @@
 # Avoid Module::Build generated and utility files.
 \bBuild$
 \b_build/
+\bMETA\.yaml$
 
 # Avoid temp and backup files.
 ~$
