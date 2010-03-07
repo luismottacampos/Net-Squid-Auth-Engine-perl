@@ -14,7 +14,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -33,6 +33,26 @@ $Config{InstallScript}/squid-auth-engine, shipped with this module.
     $engine->run;
 
 =head1 CONFIGURATION FILE SPECIFICATION
+
+The configuration file currently supports two keywords, at the moment. Only one
+of them is useful and required:
+
+=head2 C<plugin>
+
+The C<plugin> keyword indicates which module name should be loaded as
+authentication back-end to this interface. The string
+I<Net::Squid::Auth::Plugin::> will be automatically appended to the module name
+pointed here before it's loaded.
+
+=head2 C<include>
+
+The C<include> keyword can be used to import and process another configuration
+file (a part of one) if required. The configuration file name should be passed
+as argument to the keyword.
+
+=head2 Configuration File Example
+
+  plugin 'UserList'
 
 =head1 WRITING PLUGINS
 
@@ -81,6 +101,12 @@ L<Net::Squid::Auth::Plugin::UserList>, the most basic plugin possible: it loads
 a username and password list from the configuration file and uses it to
 authenticate users against it. For more information, please read the
 L<Net::Squid::Auth::Plugin::UserList> documentation.
+
+=head1 OTHER IMPLEMENTATIONS
+
+=head2 L<Net::Squid::Auth::Plugin::SimpleLDAP>
+
+A simple LDAP-based credentials validation plugin for L<Net::Squid::Auth::Engine>.
 
 =head1 FUNCTIONS
 
@@ -206,9 +232,7 @@ bug as I make changes.
 
 =over 4
 
-=item * There are no working tests for this module yet;
-
-=item * There are no working plugin modules implemented yet;
+=item * There are no working tests for this module (yet);
 
 =back
 
