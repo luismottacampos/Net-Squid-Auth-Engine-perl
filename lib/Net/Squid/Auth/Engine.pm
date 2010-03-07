@@ -14,7 +14,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
@@ -279,7 +279,7 @@ To Alexei Znamensky, Gabriel Viera, and Mike Tesliuk, for pointing me a design
 bug and helping me re-design the responsibility chain.
 
 To Alexei Znamensky, for trying to use the module, reporting bugs, submiting
-patches and implementing L<Net::Squid::Auth::Plugin::LDAP>.
+patches and implementing L<Net::Squid::Auth::Plugin::SimpleLDAP>.
 
 =head1 COPYRIGHT & LICENSE
 
